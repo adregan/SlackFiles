@@ -1,42 +1,45 @@
-import configparser
-from src.slack import get_rtm_url, SlackError
-import logging
-from colorlog import ColoredFormatter
-
-logger = logging.getLogger('app')
-logger.setLevel(logging.INFO)
-
-handler = logging.StreamHandler()
-formatter = ColoredFormatter(
-    '%(log_color)s[%(levelname)s]%(reset)s %(message)s',
-    datefmt=None,
-    reset=True,
-    log_colors={
-            'DEBUG':    'cyan',
-            'INFO':     'green',
-            'WARNING':  'yellow',
-            'ERROR':    'red',
-            'CRITICAL': 'white,bg_red',
-    },
-    secondary_log_colors={},
-    style='%'
+from configparser import (
+    ConfigParser,
+    NoSectionError,
+    NoOptionError
 )
+from src.slack import get_rtm_url, SlackError
+from src.logs import create_logger
 
-handler.setFormatter(formatter)
-
-logger.addHandler(handler)
-
-config = configparser.ConfigParser()
 
 def run():
-    config.read('/etc/slack.ini')
-    slack_api_token = config['default']['slack_api_token']
+    logger = create_logger()
+    file = '/etc/slack.ini'
+
+    config = ConfigParser()
+    success = config.read(file)
+
+    if not success:
+        logger.error(
+            'Configuration file not found: {location}'.format(location=file)
+        )
+        return
+
+    try:
+        slack_api_token = config.get('slack', 'slack_api_token')
+    except (NoSectionError, NoOptionError) as error:
+        logger.error(
+            'Error in configuration file: {error}'.format(error=error))
+        return
+    else:
+        logger.info(
+            'Loaded configuration file from: {location}'.format(location=file)
+        )
+
     try:
         url = get_rtm_url(slack_api_token)
-        logger.info('Got Slack webhook URL: {url}.'.format(url=url))
     except SlackError as error:
         logger.error(error)
-        exit(1)
+        return
+    else:
+        logger.info('Got Slack webhook URL: {url}.'.format(url=url))
+
+
 
 if __name__ == '__main__':
     run()
