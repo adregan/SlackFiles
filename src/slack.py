@@ -1,4 +1,6 @@
 import requests
+import logging
+logger = logging.getLogger('app')
 
 
 class SlackError(Exception): pass
@@ -7,6 +9,8 @@ def get_rtm_url(token):
     rtm_start_url = 'https://slack.com/api/rtm.start?token={token}'.format(
         token=token
     )
+
+    logger.info('Connecting to https://slack.com/api/rtm.start')
 
     resp = requests.post(rtm_start_url)
 
