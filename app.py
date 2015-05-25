@@ -3,12 +3,23 @@ from configparser import (
     NoSectionError,
     NoOptionError
 )
-from src.slack import get_rtm_url, SlackError
+import logging
+
+from src.slack import (
+    fetch_from_slack,
+    SlackError,
+    SlackClientProtocol
+)
 from src.logs import create_logger
+from src.utils import parse_url
+import asyncio
+
+from autobahn.asyncio.websocket import WebSocketClientFactory
 
 
 def run():
-    logger = create_logger()
+    create_logger()
+    logger = logging.getLogger('app')
     file = '/etc/slack.ini'
 
     config = ConfigParser()
