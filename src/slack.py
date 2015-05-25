@@ -1,10 +1,13 @@
-import requests
-import logging
 import asyncio
-from autobahn.asyncio.websocket import WebSocketClientProtocol
-import json
+import aiohttp
+import logging
+from .utils import get_config
 
 logger = logging.getLogger('app')
+
+config = get_config('/etc/slack.ini')
+
+slack_api_token = config.get('slack', 'slack_api_token')
 
 
 class SlackError(Exception):
