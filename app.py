@@ -43,7 +43,7 @@ def run():
         )
 
     try:
-        url = get_rtm_url(slack_api_token)
+        url = fetch_from_slack('rtm.start', slack_api_token).get('url')
     except SlackError as error:
         logger.error(error)
         return
