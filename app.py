@@ -50,6 +50,7 @@ def run():
     else:
         logger.info('Got Slack webhook URL: {url}.'.format(url=url))
 
+    connect = parse_url(url)
 
 
 if __name__ == '__main__':
