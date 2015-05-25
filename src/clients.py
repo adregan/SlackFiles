@@ -28,6 +28,7 @@ class SlackClientProtocol(WebSocketClientProtocol):
                 }
                 logger.info('Updated direct message user data')
 
+            # Repeat this every 30 minutes
             yield from asyncio.sleep(1800)
 
     def onMessage(self, payload, isBinary):
@@ -36,7 +37,6 @@ class SlackClientProtocol(WebSocketClientProtocol):
 
         # Only interested in the file comments
         if payload.get('type') != 'file_comment_added':
-            print(payload)
             return
 
         # Saves a reference to these two items

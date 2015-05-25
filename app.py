@@ -16,17 +16,16 @@ def setup():
         return
     else:
         url = body.get('url')
-        logger.info('Got Slack webhook URL: {url}.'.format(url=url))
+        logger.info('Got Slack webhook URL.')
 
     return url
 
-def run():
+if __name__ == '__main__':
+    create_logger()
+    logger = logging.getLogger('app')
+
     loop = asyncio.get_event_loop()
     url = loop.run_until_complete(setup())
-
-    if not url:
-        return
-
     connect = parse_url(url)
 
     factory = WebSocketClientFactory(url, debug=False)
@@ -38,11 +37,7 @@ def run():
         port=connect.port,
         ssl=connect.ssl
     )
-    loop.run_until_complete(coro)
+
+    url = loop.run_until_complete(coro)
     loop.run_forever()
     loop.close()
-
-if __name__ == '__main__':
-    create_logger()
-    logger = logging.getLogger('app')
-    run()
