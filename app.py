@@ -52,6 +52,18 @@ def run():
 
     connect = parse_url(url)
 
+    factory = WebSocketClientFactory(url, debug=False)
+    factory.protocol = SlackClientProtocol
+    loop = asyncio.get_event_loop()
+    coro = loop.create_connection(
+        factory,
+        host=connect.host,
+        port=connect.port,
+        ssl=connect.ssl
+    )
+    loop.run_until_complete(coro)
+    loop.run_forever()
+    loop.close()
 
 if __name__ == '__main__':
     run()
