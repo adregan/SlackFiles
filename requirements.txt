@@ -1,2 +1,7 @@
+aiohttp==0.15.3
+autobahn==0.10.4
 certifi==2015.4.28
-requests==2.7.0
+chardet==2.3.0
+colorlog==2.6.0
+six==1.9.0
+txaio==1.0.0
