@@ -1,5 +1,8 @@
 import urllib
 from collections import namedtuple
+from configparser import ConfigParser
+import logging
+logger = logging.getLogger('app')
 
 Connection = namedtuple('Connection', ('host', 'port', 'ssl'))
 
@@ -25,3 +28,16 @@ def parse_url(url: str) -> namedtuple:
         port = 80
 
     return Connection(host, port, ssl)
+
+
+def get_config(file: str) -> ConfigParser:
+    config = ConfigParser()
+    success = config.read(file)
+
+    if not success:
+        logger.error(
+            'Configuration file not found: {location}'.format(location=file)
+        )
+        return
+
+    return config
